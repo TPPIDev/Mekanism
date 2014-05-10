@@ -60,7 +60,9 @@ public class TileEntityHydrogenGenerator extends TileEntityGenerator implements 
 				}
 				else if(inventory[0] != null && inventory[0].getItem() instanceof IGasItem)
 				{
-					gasType = ((IGasItem)inventory[0].getItem()).getGas(inventory[0]).getGas();
+					GasStack stored = ((IGasItem)inventory[0].getItem()).getGas(inventory[0]);
+					if (stored != null)
+						gasType = stored.getGas();
 				}
 				if(gasType != null)
 				{
