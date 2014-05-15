@@ -3,6 +3,7 @@ package mekanism.common.tile;
 import ic2.api.tile.IWrenchable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,7 +33,7 @@ public abstract class TileEntityBasicBlock extends TileEntity implements IWrench
 	public Set<EntityPlayer> openedThisTick = new HashSet<EntityPlayer>();
 
 	/** The players currently using this block. */
-	public Set<EntityPlayer> playersUsing = new HashSet<EntityPlayer>();
+	public Set<EntityPlayer> playersUsing = Collections.synchronizedSet(new HashSet<EntityPlayer>());
 
 	/** A timer used to send packets to clients. */
 	public int ticker;
