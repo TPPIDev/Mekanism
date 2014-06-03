@@ -187,8 +187,9 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
 			boost+=5;
 		if(worldObj.getBlockId(xCoord, yCoord, zCoord-1) == 10 || worldObj.getBlockId(xCoord, yCoord, zCoord-1) == 11)
 			boost+=5;
+		
 		if(worldObj.provider.dimensionId == -1)
-			boost+=100;
+			boost*=2;
 
 		return boost * MekanismGenerators.passiveHeatGen;
 	}
