@@ -27,10 +27,13 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
 {
 	/** The FluidTank for this generator. */
 	public FluidTank lavaTank = new FluidTank(24000);
+	
+	private static final int lavaPerTick = 2;
+	private static final int powerPerMB = 25;
 
 	public TileEntityHeatGenerator()
 	{
-		super("HeatGenerator", 160000, MekanismGenerators.heatGeneration*2);
+		super("HeatGenerator", 20000, powerPerMB * lavaPerTick * 2);
 		inventory = new ItemStack[2];
 	}
 
@@ -101,8 +104,8 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
 			{
 				setActive(true);
 
-				lavaTank.drain(10, true);
-				setEnergy(electricityStored + MekanismGenerators.heatGeneration);
+				lavaTank.drain(lavaPerTick, true);
+				setEnergy(electricityStored + powerPerMB * lavaPerTick);
 			}
 			else {
 				setActive(false);
@@ -128,7 +131,7 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
 	@Override
 	public boolean canOperate()
 	{
-		return electricityStored < MAX_ELECTRICITY && lavaTank.getFluid() != null && lavaTank.getFluid().amount >= 10 && MekanismUtils.canFunction(this);
+		return electricityStored < MAX_ELECTRICITY && lavaTank.getFluid() != null && lavaTank.getFluid().amount >= lavaPerTick && MekanismUtils.canFunction(this);
 	}
 
 	@Override
@@ -170,7 +173,7 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
 
 	public double getBoost()
 	{
-		int boost = 0;
+		double boost = 0;
 
 		if(worldObj.getBlockId(xCoord+1, yCoord, zCoord) == 10 || worldObj.getBlockId(xCoord+1, yCoord, zCoord) == 11)
 			boost+=5;
@@ -187,7 +190,7 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
 		if(worldObj.provider.dimensionId == -1)
 			boost+=100;
 
-		return boost;
+		return boost * MekanismGenerators.passiveHeatGen;
 	}
 
 	public int getFuel(ItemStack itemstack)
@@ -197,7 +200,7 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
 			return 1000;
 		}
 
-		return TileEntityFurnace.getItemBurnTime(itemstack)/20;
+		return TileEntityFurnace.getItemBurnTime(itemstack) / 2;
 	}
 
 	@Override
