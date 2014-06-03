@@ -25,7 +25,16 @@ dependencies {
         compile ':forgemultipart:1.0.0.250'
 }
 
-version = "6.1.1.TPPI." + "$System.env.BUILD_NUMBER"
+ext.configFile = file "build.properties"
+
+configFile.withReader {
+    // Load config.  It shall from now be referenced as simply config or project.config
+    def prop = new Properties()
+    prop.load(it)
+    project.ext.config = new ConfigSlurper().parse prop
+}
+
+version = "${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}"
 archivesBaseName = "MekanismAll"
 libsDirName = "../output"
 distsDirName = "../output"
