@@ -176,7 +176,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
  * @author AidanBrady
  *
  */
-@Mod(modid = "Mekanism", name = "Mekanism", version = "6.1.1.TPPI")
+@Mod(modid = "Mekanism", name = "Mekanism", version = "6.1.2.TPPI")
 @NetworkMod(channels = {"MEK"}, clientSideRequired = true, serverSideRequired = false, packetHandler = PacketHandler.class)
 public class Mekanism
 {
