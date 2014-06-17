@@ -75,8 +75,9 @@ public class ThreadMinerSearch extends Thread
 
 			info.id = tileEntity.worldObj.getBlockId(x, y, z);
 			info.meta = tileEntity.worldObj.getBlockMetadata(x, y, z);
+			Block block = Block.blocksList[info.id];
 
-			if(info.id != 0 && info.id != Block.bedrock.blockID)
+			if(info.id != 0 && block.getBlockHardness(tileEntity.worldObj, x, y, z) >= 0)
 			{
 				boolean canFilter = false;
 

@@ -311,7 +311,7 @@ public class ItemAtomicDisassembler extends ItemEnergized
 	@Override
 	public boolean canSend(ItemStack itemStack)
 	{
-		return false;
+		return true;
 	}
 
 	public static class Finder
