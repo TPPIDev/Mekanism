@@ -3,6 +3,7 @@ package mekanism.common;
 import java.io.File;
 
 import mekanism.api.MekanismAPI;
+import mekanism.common.Mekanism.ItemType;
 import mekanism.common.entity.EntityRobit;
 import mekanism.common.inventory.container.ContainerAdvancedElectricMachine;
 import mekanism.common.inventory.container.ContainerChanceMachine;
@@ -219,6 +220,23 @@ public class CommonProxy
 		Mekanism.VOICE_PORT = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "VoicePort", 36123).getInt();
 		//If this is less than 1, upgrades make machines worse. If less than 0, I don't even know.
 		Mekanism.maxUpgradeMultiplier = Math.max(1, Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "UpgradeModifier", 10).getInt());
+
+		String[] blacklist = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "DigitalMinerBlacklist", new String[]{}, "IDs to not allow the digiminer to mine.").getStringList();
+		
+		for (String s : blacklist)
+		{
+			String[] info = s.split(":");
+
+			if (info.length != 2)
+			{
+				throw new RuntimeException(s + " is not a valid ID:damage string");
+			}
+			
+			int id = Integer.parseInt(info[0]);
+			int meta = Integer.parseInt(info[1]);
+			
+			Mekanism.digiMinerBlacklist.add(new ItemType(id, meta));
+		}
 
 		Mekanism.TO_TE = Mekanism.TO_BC*10;
 		Mekanism.FROM_TE = Mekanism.FROM_BC/10;

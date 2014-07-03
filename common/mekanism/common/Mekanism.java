@@ -133,7 +133,6 @@ import mekanism.common.transporter.TransporterManager;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import mekanism.common.voice.VoiceServerManager;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -154,7 +153,6 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import rebelkeithy.mods.metallurgy.api.IOreInfo;
 import rebelkeithy.mods.metallurgy.api.MetallurgyAPI;
 import codechicken.multipart.handler.MultipartProxy;
-
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.common.Mod;
@@ -376,10 +374,43 @@ public class Mekanism
 	public static double chemicalCrystallizerUsage;
 	public static double seismicVibratorUsage;
 	public static double pressurizedReactionBaseUsage;
+	
+	public static class ItemType
+	{
+		public final int id, damage;
+		
+		public ItemType(int id, int damage)
+		{
+			this.id = id;
+			this.damage = damage;
+		}
+		
+		@Override
+		public boolean equals(Object arg0)
+		{
+			if (arg0 instanceof ItemType)
+			{
+				ItemType item = (ItemType) arg0;
+				
+				if (item.damage == -1 || this.damage == -1)
+				{
+					return this.id == item.id;
+				}
+				else
+				{
+					return this.id == item.id && this.damage == item.damage;
+				}
+			}
+			return false;
+		}
+	}
+
+	public static List<ItemType> digiMinerBlacklist = new ArrayList<ItemType>();
 
 	/**
 	 * Adds all in-game crafting and smelting recipes.
 	 */
+	@SuppressWarnings("unchecked")
 	public void addRecipes()
 	{
 		//Storage Recipes

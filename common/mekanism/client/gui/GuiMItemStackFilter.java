@@ -2,6 +2,8 @@ package mekanism.client.gui;
 
 import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
+import mekanism.common.Mekanism;
+import mekanism.common.Mekanism.ItemType;
 import mekanism.common.PacketHandler;
 import mekanism.common.PacketHandler.Transmission;
 import mekanism.common.inventory.container.ContainerFilter;
@@ -13,7 +15,6 @@ import mekanism.common.network.PacketNewFilter;
 import mekanism.common.tile.TileEntityDigitalMiner;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
-import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
@@ -210,7 +211,7 @@ public class GuiMItemStackFilter extends GuiMekanism
 				{
 					if(stack.getItem() instanceof ItemBlock)
 					{
-						if(stack.itemID != Block.bedrock.blockID)
+						if(!Mekanism.digiMinerBlacklist.contains(new ItemType(stack.itemID, stack.getItemDamage())))
 						{
 							filter.itemType = stack.copy();
 							filter.itemType.stackSize = 1;

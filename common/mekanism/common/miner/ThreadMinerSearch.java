@@ -7,6 +7,8 @@ import java.util.Map;
 import mekanism.api.Coord4D;
 import mekanism.api.ItemInfo;
 import mekanism.common.IBoundingBlock;
+import mekanism.common.Mekanism;
+import mekanism.common.Mekanism.ItemType;
 import mekanism.common.tile.TileEntityDigitalMiner;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.block.Block;
@@ -77,7 +79,7 @@ public class ThreadMinerSearch extends Thread
 			info.meta = tileEntity.worldObj.getBlockMetadata(x, y, z);
 			Block block = Block.blocksList[info.id];
 
-			if(info.id != 0 && block.getBlockHardness(tileEntity.worldObj, x, y, z) >= 0)
+			if(info.id != 0 && block.getBlockHardness(tileEntity.worldObj, x, y, z) >= 0 && !Mekanism.digiMinerBlacklist.contains(new ItemType(info.id, info.meta)));
 			{
 				boolean canFilter = false;
 
