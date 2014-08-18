@@ -83,17 +83,22 @@ public class TileEntityHydrogenGenerator extends TileEntityGenerator implements 
 				else if(fuelTank.getStored() > 0)
 				{
 					FuelGas fuel = FuelHandler.getFuel(fuelTank.getGas().getGas());
-					burnTicks = fuel.burnTicks - 1;
-					generationRate = fuel.energyPerTick;
-					fuelTank.draw(1, true);
-					setEnergy(electricityStored + generationRate);
+					if (fuel != null)
+					{
+						burnTicks = fuel.burnTicks - 1;
+						generationRate = fuel.energyPerTick;
+						fuelTank.draw(1, true);
+						setEnergy(electricityStored + generationRate);
+					}
 				}
-				else {
+				else 
+				{
 					burnTicks = 0;
 					generationRate = 0;
 				}
 			}
-			else {
+			else 
+			{
 				setActive(false);
 			}
 		}
