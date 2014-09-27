@@ -3,8 +3,8 @@
   "modid": "Mekanism",
   "name": "Mekanism",
   "description": "Energy, Armor, Tools, Weapons, Machines, Magic.",
-  "version": "6.0.4",
-  "mcversion": "1.6.4",
+  "version": "${version}",
+  "mcversion": "${mc_version}",
   "updateUrl": "",
   "authors": [
     "aidancbrady"

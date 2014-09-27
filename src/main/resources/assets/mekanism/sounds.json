@@ -1,0 +1,10 @@
+{
+   "etc.Beep": {"category": "master","sounds": [{"name": "etc/Beep","stream": false}]},
+   "etc.Click": {"category": "master","sounds": [{"name": "etc/Click","stream": false}]},
+   "etc.Ding": {"category": "master","sounds": [{"name": "etc/Ding","stream": false}]},
+   "etc.Error": {"category": "master","sounds": [{"name": "etc/Error","stream": false}]},
+   "etc.GasMask": {"category": "master","sounds": [{"name": "etc/GasMask","stream": false}]},
+   "etc.Hydraulic": {"category": "master","sounds": [{"name": "etc/Hydraulic","stream": false}]},
+   "etc.Pop": {"category": "master","sounds": [{"name": "etc/Pop","stream": false}]},
+   "etc.Success": {"category": "master","sounds": [{"name": "etc/Success","stream": false}]}
+}
