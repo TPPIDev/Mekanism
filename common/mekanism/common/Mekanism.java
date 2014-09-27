@@ -2,6 +2,7 @@ package mekanism.common;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -120,6 +121,7 @@ import mekanism.common.network.PacketWalkieTalkieState;
 import mekanism.common.recipe.BinRecipe;
 import mekanism.common.recipe.MekanismRecipe;
 import mekanism.common.recipe.RecipeHandler;
+import mekanism.common.recipe.RecipeHandler.Recipe;
 import mekanism.common.tank.DynamicTankCache;
 import mekanism.common.tile.TileEntityAdvancedBoundingBlock;
 import mekanism.common.tile.TileEntityBoundingBlock;
@@ -174,7 +176,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
  * @author AidanBrady
  *
  */
-@Mod(modid = "Mekanism", name = "Mekanism", version = "6.1.2.TPPI")
+@Mod(modid = "Mekanism", name = "Mekanism", version = "6.1.5.TPPI")
 @NetworkMod(channels = {"MEK"}, clientSideRequired = true, serverSideRequired = false, packetHandler = PacketHandler.class)
 public class Mekanism
 {
@@ -1423,9 +1425,20 @@ public class Mekanism
 		logger.info("[Mekanism] Mod loaded.");
 	}	
 	
+	@SuppressWarnings("unchecked")
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{		
+		Iterator<ItemStack> iter = Recipe.CRUSHER.get().keySet().iterator();
+		while(iter.hasNext())
+		{
+			ItemStack stack = iter.next();
+			if (stack != null && stack.getItem() == Item.wheat && ((ItemStack)Recipe.CRUSHER.get().get(stack)).getItem() != BioFuel)
+			{
+				iter.remove();
+			}
+		}
+		
 		proxy.loadSoundHandler();
 		hooks.hook();
 		
