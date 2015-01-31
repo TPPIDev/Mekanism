@@ -11,16 +11,16 @@ import mekanism.common.network.PacketElectricChest.ElectricChestPacketType;
 import mekanism.common.tile.TileEntityElectricChest;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.item.ItemStack;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiPasswordEnter extends GuiScreen
@@ -168,7 +168,11 @@ public class GuiPasswordEnter extends GuiScreen
 		int guiHeight = (height - ySize) / 2;
 
 		drawTexturedModalRect(guiWidth, guiHeight, 0, 0, xSize, ySize);
+		String actualPass = passwordField.getText();
+		String censored = new String(new char[actualPass.length()]).replace("\0", "*");
+		passwordField.setText(censored);
 		passwordField.drawTextBox();
+		passwordField.setText(actualPass);
 
 		super.drawScreen(mouseX, mouseY, partialTick);
 

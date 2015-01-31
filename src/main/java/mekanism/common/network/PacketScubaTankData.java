@@ -1,15 +1,17 @@
 package mekanism.common.network;
 
-import io.netty.buffer.ByteBuf;
 import mekanism.common.Mekanism;
 import mekanism.common.PacketHandler;
 import mekanism.common.item.ItemScubaTank;
 import mekanism.common.network.PacketScubaTankData.ScubaTankDataMessage;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+
+import io.netty.buffer.ByteBuf;
 
 public class PacketScubaTankData implements IMessageHandler<ScubaTankDataMessage, IMessage>
 {
@@ -79,10 +81,13 @@ public class PacketScubaTankData implements IMessageHandler<ScubaTankDataMessage
 			else if(packetType == ScubaTankPacket.FULL)
 			{
 				dataStream.writeInt(Mekanism.gasmaskOn.size());
-	
-				for(String name : Mekanism.gasmaskOn)
+
+				synchronized(Mekanism.gasmaskOn)
 				{
-					PacketHandler.writeString(dataStream, name);
+					for (String name : Mekanism.gasmaskOn)
+					{
+						PacketHandler.writeString(dataStream, name);
+					}
 				}
 			}
 		}

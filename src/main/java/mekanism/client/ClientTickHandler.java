@@ -37,6 +37,7 @@ import mekanism.common.network.PacketScubaTankData.ScubaTankPacket;
 import mekanism.common.network.PacketWalkieTalkieState.WalkieTalkieStateMessage;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -391,24 +392,30 @@ public class ClientTickHandler
 
 			if(MekanismClient.audioHandler != null)
 			{
-				for(String username : Mekanism.jetpackOn)
+				synchronized(Mekanism.jetpackOn)
 				{
-					if(mc.theWorld.getPlayerEntityByName(username) != null)
+					for (String username : Mekanism.jetpackOn)
 					{
-						if(MekanismClient.audioHandler.getFrom(mc.theWorld.getPlayerEntityByName(username)) == null)
+						if (mc.theWorld.getPlayerEntityByName(username) != null)
 						{
-							new JetpackSound(MekanismClient.audioHandler.getIdentifier(), mc.theWorld.getPlayerEntityByName(username));
+							if (MekanismClient.audioHandler.getFrom(mc.theWorld.getPlayerEntityByName(username)) == null)
+							{
+								new JetpackSound(MekanismClient.audioHandler.getIdentifier(), mc.theWorld.getPlayerEntityByName(username));
+							}
 						}
 					}
 				}
 
-				for(String username : Mekanism.gasmaskOn)
+				synchronized(Mekanism.gasmaskOn)
 				{
-					if(mc.theWorld.getPlayerEntityByName(username) != null)
+					for (String username : Mekanism.gasmaskOn)
 					{
-						if(MekanismClient.audioHandler.getFrom(mc.theWorld.getPlayerEntityByName(username)) == null)
+						if (mc.theWorld.getPlayerEntityByName(username) != null)
 						{
-							new GasMaskSound(MekanismClient.audioHandler.getIdentifier(), mc.theWorld.getPlayerEntityByName(username));
+							if (MekanismClient.audioHandler.getFrom(mc.theWorld.getPlayerEntityByName(username)) == null)
+							{
+								new GasMaskSound(MekanismClient.audioHandler.getIdentifier(), mc.theWorld.getPlayerEntityByName(username));
+							}
 						}
 					}
 				}

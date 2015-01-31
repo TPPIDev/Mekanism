@@ -7,6 +7,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.block.BlockMachine;
 import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.util.MekanismUtils;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -16,6 +17,7 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModAPIManager;
 import cpw.mods.fml.common.Optional.Method;
 import cpw.mods.fml.common.event.FMLInterModComms;
+
 import dan200.computercraft.api.ComputerCraftAPI;
 import ic2.api.recipe.IRecipeInput;
 import ic2.api.recipe.RecipeInputItemStack;
@@ -30,8 +32,6 @@ import ic2.api.recipe.Recipes;
  */
 public final class MekanismHooks
 {
-	private Class BasicComponents;
-
 	private Class BuildCraftEnergy;
 
 	public boolean IC2Loaded = false;
@@ -80,7 +80,7 @@ public final class MekanismHooks
 		
 	}
 
-	@Method(modid = "IC2API")
+	@Method(modid = "IC2")
 	public void hookIC2Recipes()
 	{
 		for(Map.Entry<IRecipeInput, RecipeOutput> entry : Recipes.macerator.getRecipes().entrySet())

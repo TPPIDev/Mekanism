@@ -10,12 +10,13 @@ import mekanism.api.ChemicalPair;
 import mekanism.api.PressurizedProducts;
 import mekanism.api.PressurizedReactants;
 import mekanism.api.PressurizedRecipe;
+import mekanism.api.StackUtils;
 import mekanism.api.gas.GasRegistry;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.GasTank;
 import mekanism.api.infuse.InfusionInput;
 import mekanism.api.infuse.InfusionOutput;
-import mekanism.api.StackUtils;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -415,7 +416,7 @@ public final class RecipeHandler
 		{
 			for(Map.Entry<AdvancedInput, ItemStack> entry : recipes.entrySet())
 			{
-				if(entry.getKey().matches(input))
+				if(entry.getKey().matches(input) && entry.getKey().gasType == input.gasType)
 				{
 					if(stackDecrease)
 					{

@@ -1,7 +1,5 @@
 package mekanism.common.multipart;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,6 +22,7 @@ import mekanism.common.transporter.TransporterStack.Path;
 import mekanism.common.util.InventoryUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.TransporterUtils;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -35,16 +34,16 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.PipeWire;
-import codechicken.lib.vec.Vector3;
 import cpw.mods.fml.common.Optional.Interface;
 import cpw.mods.fml.common.Optional.Method;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Interface(iface = "buildcraft.api.transport.IPipeTile", modid = "BuildCraftAPI|transport")
-public class PartLogisticalTransporter extends PartSidedPipe implements ILogisticalTransporter, IPipeTile
+import io.netty.buffer.ByteBuf;
+
+import codechicken.lib.vec.Vector3;
+
+public class PartLogisticalTransporter extends PartSidedPipe implements ILogisticalTransporter
 {
 	public static TransmitterIcons transporterIcons = new TransmitterIcons(3, 2);
 
@@ -168,7 +167,7 @@ public class PartLogisticalTransporter extends PartSidedPipe implements ILogisti
 	@Override
 	public boolean isValidAcceptor(TileEntity tile, ForgeDirection side)
 	{
-		return TransporterUtils.getConnections(this)[side.ordinal()];
+		return TransporterUtils.isValidAcceptorOnSide(tile, side);
 	}
 
 	@Override
@@ -662,32 +661,6 @@ public class PartLogisticalTransporter extends PartSidedPipe implements ILogisti
 	}
 
 	@Override
-	public PipeType getPipeType()
-	{
-		return PipeType.ITEM;
-	}
-
-	@Override
-	public int injectItem(ItemStack stack, boolean doAdd, ForgeDirection from)
-	{
-		if(doAdd)
-		{
-			TileEntity tile = Coord4D.get(tile()).getFromSide(from).getTileEntity(world());
-
-			ItemStack rejects = TransporterUtils.insert(tile, this, stack, null, true, 0);
-			return TransporterManager.getToUse(stack, rejects).stackSize;
-		}
-
-		return 0;
-	}
-
-	@Override
-	public boolean isPipeConnected(ForgeDirection with)
-	{
-		return true;
-	}
-
-	@Override
 	protected boolean onConfigure(EntityPlayer player, int part, int side)
 	{
 		TransporterUtils.incrementColor(this);
@@ -771,12 +744,5 @@ public class PartLogisticalTransporter extends PartSidedPipe implements ILogisti
 	public int getCost()
 	{
 		return 1;
-	}
-
-	@Override
-	@Method(modid = "BuildCraftAPI|transport")
-	public boolean isWireActive(PipeWire wire)
-	{
-		return false;
 	}
 }

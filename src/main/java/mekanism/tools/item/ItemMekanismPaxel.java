@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeHooks;
 
 public class ItemMekanismPaxel extends ItemMekanismTool
 {
@@ -50,6 +49,16 @@ public class ItemMekanismPaxel extends ItemMekanismTool
 		if(block == Blocks.redstone_ore || block == Blocks.lit_redstone_ore)
 		{
 			return toolMaterial.getHarvestLevel() >= 2;
+		}
+
+		if(block == Blocks.anvil)
+		{
+			return toolMaterial.getHarvestLevel() >= 0;
+		}
+
+		if(block == Blocks.snow || block == Blocks.snow_layer)
+		{
+			return true;
 		}
 
 		if(block.getMaterial() == Material.rock)

@@ -44,6 +44,7 @@ import mekanism.common.tile.TileEntityAdvancedBoundingBlock;
 import mekanism.common.tile.TileEntityBoundingBlock;
 import mekanism.common.tile.TileEntityDynamicTank;
 import mekanism.common.tile.TileEntityElectricChest;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -76,6 +77,7 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.GameData;
 
 import buildcraft.api.tools.IToolWrench;
+import ic2.api.energy.EnergyNet;
 
 /**
  * Utilities used by Mekanism. All miscellaneous methods are located here.
@@ -632,7 +634,18 @@ public final class MekanismUtils
 	 */
 	public static int getSecondaryEnergyPerTick(IUpgradeManagement mgmt, int def)
 	{
-		return (int)(def * Math.pow(Mekanism.maxUpgradeMultiplier, (mgmt.getSpeedMultiplier()-mgmt.getEnergyMultiplier())/8.0));
+		return (int)getSecondaryEnergyPerTickMean(mgmt, def);
+	}
+
+	/**
+	 * Gets the secondary energy required per tick for a machine via upgrades.
+	 * @param mgmt - tile containing upgrades
+	 * @param def - the original, default secondary energy required
+	 * @return max secondary energy per tick
+	 */
+	public static double getSecondaryEnergyPerTickMean(IUpgradeManagement mgmt, int def)
+	{
+		return (def * Math.pow(Mekanism.maxUpgradeMultiplier, (mgmt.getSpeedMultiplier()-mgmt.getEnergyMultiplier())/8.0));
 	}
 
 	/**
@@ -1175,7 +1188,7 @@ public final class MekanismUtils
 			case EU:
 				return Math.round(energy*Mekanism.TO_IC2) + " EU";
 			case MJ:
-				return (Math.round((energy*Mekanism.TO_BC)*100)/100) + " MJ";
+				return (Math.round((energy*Mekanism.TO_TE)*10)/100) + " MJ";
 		}
 
 		return "error";
@@ -1198,7 +1211,7 @@ public final class MekanismUtils
 	 */
 	public static boolean useBuildCraft()
 	{
-		return Mekanism.hooks.BuildCraftPowerLoaded;
+		return Mekanism.hooks.BuildCraftPowerLoaded && !Mekanism.blacklistBC;
 	}
 
 	/**
@@ -1208,7 +1221,7 @@ public final class MekanismUtils
 	 */
 	public static boolean useIC2()
 	{
-		return Mekanism.hooks.IC2Loaded;
+		return Mekanism.hooks.IC2Loaded && EnergyNet.instance != null && !Mekanism.blacklistIC2;
 	}
 
 	/**
@@ -1218,7 +1231,7 @@ public final class MekanismUtils
 	 */
 	public static boolean useRF()
 	{
-		return Mekanism.hooks.RedstoneFluxLoaded;
+		return Mekanism.hooks.RedstoneFluxLoaded && !Mekanism.blacklistRF;
 	}
 
 	/**

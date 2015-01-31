@@ -1,12 +1,11 @@
 package mekanism.common.tile;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.ArrayList;
 import java.util.Map;
 
 import mekanism.api.AdvancedInput;
 import mekanism.api.EnumColor;
+import mekanism.api.StackUtils;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.GasTank;
@@ -21,13 +20,17 @@ import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.InventoryUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
-import mekanism.api.StackUtils;
+import mekanism.common.util.StatUtils;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.Optional.Method;
 
+import io.netty.buffer.ByteBuf;
+
 import dan200.computercraft.api.lua.ILuaContext;
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 
 public abstract class TileEntityAdvancedElectricMachine extends TileEntityBasicMachine implements IGasHandler, ITubeConnection
@@ -109,7 +112,7 @@ public abstract class TileEntityAdvancedElectricMachine extends TileEntityBasicM
 					operatingTicks = 0;
 				}
 
-				gasTank.draw(MekanismUtils.getSecondaryEnergyPerTick(this, SECONDARY_ENERGY_PER_TICK), true);
+				gasTank.draw(StatUtils.inversePoisson(MekanismUtils.getSecondaryEnergyPerTickMean(this, SECONDARY_ENERGY_PER_TICK)), true);
 				electricityStored -= MekanismUtils.getEnergyPerTick(this, ENERGY_PER_TICK);
 			}
 			else {
@@ -365,7 +368,7 @@ public abstract class TileEntityAdvancedElectricMachine extends TileEntityBasicM
 
 	@Override
 	@Method(modid = "ComputerCraft")
-	public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws Exception
+	public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException
 	{
 		switch(method)
 		{

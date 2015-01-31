@@ -1,9 +1,6 @@
 package mekanism.client.nei;
 
-import static codechicken.lib.gui.GuiDraw.changeTexture;
-import static codechicken.lib.gui.GuiDraw.drawTexturedModalRect;
-
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +25,7 @@ import mekanism.client.gui.GuiSlot.SlotType;
 import mekanism.common.recipe.RecipeHandler.Recipe;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
+
 import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
@@ -35,6 +33,9 @@ import org.lwjgl.opengl.GL11;
 import codechicken.nei.NEIServerUtils;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.TemplateRecipeHandler;
+
+import static codechicken.lib.gui.GuiDraw.changeTexture;
+import static codechicken.lib.gui.GuiDraw.drawTexturedModalRect;
 
 public class MetallurgicInfuserRecipeHandler extends BaseRecipeHandler
 {
@@ -193,6 +194,18 @@ public class MetallurgicInfuserRecipeHandler extends BaseRecipeHandler
 			if(NEIServerUtils.areStacksSameTypeCrafting(((InfusionInput)irecipe.getKey()).inputStack, ingredient))
 			{
 				arecipes.add(new CachedIORecipe(irecipe, getInfuseStacks(((InfusionInput)irecipe.getKey()).infusionType), ((InfusionInput)irecipe.getKey()).infusionType));
+			}
+			
+			List<ItemStack> infuses;
+			
+			for(ItemStack stack : getInfuseStacks(((InfusionInput)irecipe.getKey()).infusionType)) 
+			{
+				if(NEIServerUtils.areStacksSameTypeCrafting(stack, ingredient))
+				{
+					infuses = new ArrayList<ItemStack>();
+					infuses.add(stack);
+					arecipes.add(new CachedIORecipe(irecipe, infuses, ((InfusionInput)irecipe.getKey()).infusionType));
+				}
 			}
 		}
 	}

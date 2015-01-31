@@ -2,16 +2,17 @@ package mekanism.generators.common;
 
 import mekanism.common.Mekanism;
 import mekanism.generators.common.inventory.container.ContainerBioGenerator;
-import mekanism.generators.common.inventory.container.ContainerHeatGenerator;
 import mekanism.generators.common.inventory.container.ContainerGasGenerator;
+import mekanism.generators.common.inventory.container.ContainerHeatGenerator;
 import mekanism.generators.common.inventory.container.ContainerSolarGenerator;
 import mekanism.generators.common.inventory.container.ContainerWindTurbine;
 import mekanism.generators.common.tile.TileEntityAdvancedSolarGenerator;
 import mekanism.generators.common.tile.TileEntityBioGenerator;
-import mekanism.generators.common.tile.TileEntityHeatGenerator;
 import mekanism.generators.common.tile.TileEntityGasGenerator;
+import mekanism.generators.common.tile.TileEntityHeatGenerator;
 import mekanism.generators.common.tile.TileEntitySolarGenerator;
 import mekanism.generators.common.tile.TileEntityWindTurbine;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
@@ -48,6 +49,9 @@ public class GeneratorsCommonProxy
 	 */
 	public void loadConfiguration()
 	{
+		MekanismGenerators.enableAmbientLighting = Mekanism.configuration.get("general", "EnableAmbientLighting", true).getBoolean(true);
+		MekanismGenerators.ambientLightingLevel = Mekanism.configuration.get("general", "AmbientLightingLevel", 15, "", 0, 15).getInt(15);
+
 		MekanismGenerators.advancedSolarGeneration = Mekanism.configuration.get("generation", "AdvancedSolarGeneration", 300D).getDouble(300D);
 		MekanismGenerators.bioGeneration = Mekanism.configuration.get("generation", "BioGeneration", 350D).getDouble(350D);
 		MekanismGenerators.heatGeneration = Mekanism.configuration.get("generation", "HeatGeneration", 150D).getDouble(150D);

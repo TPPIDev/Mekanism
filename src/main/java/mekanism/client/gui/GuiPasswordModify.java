@@ -9,16 +9,16 @@ import mekanism.common.network.PacketElectricChest.ElectricChestPacketType;
 import mekanism.common.tile.TileEntityElectricChest;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.item.ItemStack;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiPasswordModify extends GuiScreen
@@ -201,8 +201,16 @@ public class GuiPasswordModify extends GuiScreen
 		fontRendererObj.drawString(displayText, guiWidth + 37, guiHeight + 19, 0x404040);
 		fontRendererObj.drawString("Enter:", guiWidth + 27, guiHeight + 37, 0x404040);
 		fontRendererObj.drawString("Repeat:", guiWidth + 21, guiHeight + 54, 0x404040);
+		String actualPass = newPasswordField.getText();
+		String censored = new String(new char[actualPass.length()]).replace("\0", "*");
+		newPasswordField.setText(censored);
 		newPasswordField.drawTextBox();
+		newPasswordField.setText(actualPass);
+		actualPass = confirmPasswordField.getText();
+		censored = new String(new char[actualPass.length()]).replace("\0", "*");
+		confirmPasswordField.setText(censored);
 		confirmPasswordField.drawTextBox();
+		confirmPasswordField.setText(actualPass);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glEnable(GL11.GL_ALPHA_TEST);

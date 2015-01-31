@@ -1,12 +1,10 @@
 package mekanism.common.integration;
 
-import ic2.api.recipe.RecipeInputOreDict;
-import ic2.api.recipe.Recipes;
-
 import java.util.ArrayList;
 
 import mekanism.api.AdvancedInput;
 import mekanism.api.ChanceOutput;
+import mekanism.api.StackUtils;
 import mekanism.api.gas.GasRegistry;
 import mekanism.api.gas.GasStack;
 import mekanism.api.infuse.InfuseObject;
@@ -16,7 +14,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.RecipeHandler.Recipe;
 import mekanism.common.util.MekanismUtils;
-import mekanism.api.StackUtils;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -27,6 +25,9 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.common.Optional.Method;
+
+import ic2.api.recipe.RecipeInputOreDict;
+import ic2.api.recipe.Recipes;
 
 public final class OreDictManager
 {
@@ -398,7 +399,7 @@ public final class OreDictManager
 		try {
 			RecipeHandler.addCrusherRecipe(new ItemStack(Mekanism.Ingot, 1, 2), MekanismUtils.size(OreDictionary.getOres("dustBronze").get(0), 1));
 			
-			if(Mekanism.hooks.IC2APILoaded)
+			if(Mekanism.hooks.IC2Loaded)
 			{
 				addIC2BronzeRecipe();
 			}
@@ -506,7 +507,7 @@ public final class OreDictManager
 
 	}
 	
-	@Method(modid = "IC2API")
+	@Method(modid = "IC2")
 	public static void addIC2BronzeRecipe()
 	{
 		try {

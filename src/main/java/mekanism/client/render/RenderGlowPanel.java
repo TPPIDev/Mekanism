@@ -6,8 +6,10 @@ import mekanism.api.EnumColor;
 import mekanism.common.multipart.PartGlowPanel;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
+
 import codechicken.lib.colour.Colour;
 import codechicken.lib.colour.ColourRGBA;
 import codechicken.lib.lighting.LightModel;
@@ -53,18 +55,12 @@ public class RenderGlowPanel implements IIconSelfRegister
 		{
 			c.computeLighting(LightModel.standardLightModel);
 		}
-
-		for(CCModel c : lightModels)
-		{
-			c.computeLighting(LightModel.standardLightModel);
-		}
 	}
 
 	public void renderStatic(PartGlowPanel panel)
 	{
 		CCRenderState.reset();
 		CCRenderState.setBrightness(panel.world(), panel.x(), panel.y(), panel.z());
-		CCRenderState.hasColour = true;
 
 		Colour colour = new ColourRGBA(panel.colour.getColor(0), panel.colour.getColor(1), panel.colour.getColor(2), 1);
 		int side = panel.side.ordinal();

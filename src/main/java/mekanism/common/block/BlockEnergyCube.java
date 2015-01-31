@@ -11,7 +11,6 @@ import mekanism.common.Mekanism;
 import mekanism.common.Tier.EnergyCubeTier;
 import mekanism.common.item.ItemBlockEnergyCube;
 import mekanism.common.tile.TileEntityBasicBlock;
-import mekanism.common.tile.TileEntityElectricBlock;
 import mekanism.common.tile.TileEntityEnergyCube;
 import mekanism.common.util.MekanismUtils;
 
@@ -32,15 +31,15 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.tools.IToolWrench;
-import dan200.computercraft.api.peripheral.IPeripheral;
-import dan200.computercraft.api.peripheral.IPeripheralProvider;
-
 import cpw.mods.fml.common.ModAPIManager;
 import cpw.mods.fml.common.Optional.Interface;
 import cpw.mods.fml.common.Optional.Method;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import buildcraft.api.tools.IToolWrench;
+import dan200.computercraft.api.peripheral.IPeripheral;
+import dan200.computercraft.api.peripheral.IPeripheralProvider;
 
 /**
  * Block class for handling multiple energy cube block IDs.
@@ -249,17 +248,6 @@ public class BlockEnergyCube extends BlockContainer implements IPeripheralProvid
 		inventory.setInventory(((ISustainedInventory)tileEntity).getInventory(), itemStack);
 
 		return itemStack;
-	}
-
-	@Override
-	public void onBlockAdded(World world, int x, int y, int z)
-	{
-		TileEntity tileEntity = world.getTileEntity(x, y, z);
-
-		if(!world.isRemote && MekanismUtils.useIC2())
-		{
-			((TileEntityElectricBlock)tileEntity).register();
-		}
 	}
 
 	public ItemStack dismantleBlock(World world, int x, int y, int z, boolean returnBlock)

@@ -5,8 +5,10 @@ import java.util.Arrays;
 import mekanism.api.Coord4D;
 import mekanism.api.transmitters.IGridTransmitter;
 import mekanism.api.transmitters.TransmissionType;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
@@ -34,6 +36,32 @@ public final class PipeUtils
 		}
 
 		return pipes;
+	}
+
+	public static boolean isValidAcceptorOnSide(TileEntity tile, ForgeDirection side)
+	{
+		if(tile instanceof IGridTransmitter || !(tile instanceof IFluidHandler))
+			return false;
+
+		IFluidHandler container = (IFluidHandler)tile;
+		FluidTankInfo[] infoArray = container.getTankInfo(side.getOpposite());
+
+		if(container.canDrain(side.getOpposite(), FluidRegistry.WATER)
+			|| container.canFill(side.getOpposite(), FluidRegistry.WATER)) //I hesitate to pass null to these.
+		{
+			return true;
+		}
+		else if(infoArray != null && infoArray.length > 0)
+		{
+			for(FluidTankInfo info : infoArray)
+			{
+				if(info != null)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -73,6 +101,11 @@ public final class PipeUtils
 					{
 						connectable[side] = true;
 					}
+				}
+				else if(container.canDrain(ForgeDirection.getOrientation(side).getOpposite(), FluidRegistry.WATER)
+						|| container.canFill(ForgeDirection.getOrientation(side).getOpposite(), FluidRegistry.WATER)) //I hesitate to pass null to these.
+				{
+					connectable[side] = true;
 				}
 			}
 		}

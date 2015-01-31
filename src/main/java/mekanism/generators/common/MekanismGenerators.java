@@ -1,7 +1,5 @@
 package mekanism.generators.common;
 
-import io.netty.buffer.ByteBuf;
-
 import java.io.IOException;
 
 import mekanism.api.gas.Gas;
@@ -14,6 +12,7 @@ import mekanism.common.item.ItemMekanism;
 import mekanism.common.recipe.MekanismRecipe;
 import mekanism.generators.common.block.BlockGenerator;
 import mekanism.generators.common.item.ItemBlockGenerator;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -23,7 +22,6 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
-import buildcraft.api.fuels.IronEngineFuel;
 import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -36,6 +34,13 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import io.netty.buffer.ByteBuf;
+
+import buildcraft.api.fuels.BuildcraftFuelRegistry;
+import buildcraft.api.fuels.IFuel;
 
 @Mod(modid = "MekanismGenerators", name = "MekanismGenerators", version = "7.1.1", dependencies = "required-after:Mekanism", guiFactory = "mekanism.generators.client.gui.GeneratorsGuiFactory")
 public class MekanismGenerators implements IModule
@@ -69,22 +74,24 @@ public class MekanismGenerators implements IModule
 	public static int windGenerationMinY;
 	public static int windGenerationMaxY;
 
+	public static boolean enableAmbientLighting;
+	public static int ambientLightingLevel;
+
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
-		if(ModAPIManager.INSTANCE.hasAPI("BuildCraftAPI|fuels"))
+		if(ModAPIManager.INSTANCE.hasAPI("BuildCraftAPI|fuels") && BuildcraftFuelRegistry.fuel != null)
 		{
-			for(String s : IronEngineFuel.fuels.keySet())
+			for(IFuel s : BuildcraftFuelRegistry.fuel.getFuels())
 			{
-				Fluid f = FluidRegistry.getFluid(s);
 
-				if(!(f == null || GasRegistry.containsGas(s)))
+				if(!(s.getFluid() == null || GasRegistry.containsGas(s.getFluid().getName())))
 				{
-					GasRegistry.register(new Gas(f));
+					GasRegistry.register(new Gas(s.getFluid()));
 				}
 			}
 
-			IronEngineFuel.addFuel("ethene", (float) (240 * Mekanism.TO_BC), 40 * FluidContainerRegistry.BUCKET_VOLUME);
+			BuildcraftFuelRegistry.fuel.addFuel(FluidRegistry.getFluid("ethene"), (int)(240 * Mekanism.TO_TE), 40 * FluidContainerRegistry.BUCKET_VOLUME);
 		}
 	}
 	
@@ -115,22 +122,22 @@ public class MekanismGenerators implements IModule
 	public void addRecipes()
 	{
 		CraftingManager.getInstance().getRecipeList().add(new MekanismRecipe(new ItemStack(Generator, 1, 0), new Object[] {
-			"III", "WOW", "CFC", Character.valueOf('I'), "ingotIron", Character.valueOf('C'), "ingotCopper", Character.valueOf('O'), "ingotOsmium", Character.valueOf('F'), Blocks.furnace, Character.valueOf('W'), Blocks.planks
+			"III", "WOW", "CFC", Character.valueOf('I'), "ingotIron", Character.valueOf('C'), "ingotCopper", Character.valueOf('O'), "ingotOsmium", Character.valueOf('F'), Blocks.furnace, Character.valueOf('W'), "plankWood"
 		}));
 		CraftingManager.getInstance().getRecipeList().add(new MekanismRecipe(new ItemStack(Generator, 1, 1), new Object[] {
-			"SSS", "AIA", "PEP", Character.valueOf('S'), SolarPanel, Character.valueOf('A'), Mekanism.EnrichedAlloy, Character.valueOf('I'), Items.iron_ingot, Character.valueOf('P'), "dustOsmium", Character.valueOf('E'), Mekanism.EnergyTablet.getUnchargedItem()
+			"SSS", "AIA", "PEP", Character.valueOf('S'), SolarPanel, Character.valueOf('A'), Mekanism.EnrichedAlloy, Character.valueOf('I'), "ingotIron", Character.valueOf('P'), "dustOsmium", Character.valueOf('E'), Mekanism.EnergyTablet.getUnchargedItem()
 		}));
 		CraftingManager.getInstance().getRecipeList().add(new MekanismRecipe(new ItemStack(Generator, 1, 5), new Object[] {
-			"SES", "SES", "III", Character.valueOf('S'), new ItemStack(Generator, 1, 1), Character.valueOf('E'), Mekanism.EnrichedAlloy, Character.valueOf('I'), Items.iron_ingot
+			"SES", "SES", "III", Character.valueOf('S'), new ItemStack(Generator, 1, 1), Character.valueOf('E'), Mekanism.EnrichedAlloy, Character.valueOf('I'), "ingotIron"
 		}));
 		CraftingManager.getInstance().getRecipeList().add(new MekanismRecipe(new ItemStack(Generator, 1, 4), new Object[] {
-			"RER", "BCB", "NEN", Character.valueOf('R'), Items.redstone, Character.valueOf('E'), Mekanism.EnrichedAlloy, Character.valueOf('B'), Mekanism.BioFuel, Character.valueOf('C'), "circuitBasic", Character.valueOf('N'), Items.iron_ingot
+			"RER", "BCB", "NEN", Character.valueOf('R'), Items.redstone, Character.valueOf('E'), Mekanism.EnrichedAlloy, Character.valueOf('B'), Mekanism.BioFuel, Character.valueOf('C'), "circuitBasic", Character.valueOf('N'), "ingotIron"
 		}));
 		CraftingManager.getInstance().getRecipeList().add(new MekanismRecipe(new ItemStack(Generator, 1, 3), new Object[] {
 			"PEP", "ICI", "PEP", Character.valueOf('P'), "ingotOsmium", Character.valueOf('E'), Mekanism.EnrichedAlloy, Character.valueOf('I'), new ItemStack(Mekanism.BasicBlock, 1, 8), Character.valueOf('C'), Mekanism.ElectrolyticCore
 		}));
 		CraftingManager.getInstance().getRecipeList().add(new MekanismRecipe(new ItemStack(SolarPanel), new Object[] {
-			"GGG", "RAR", "PPP", Character.valueOf('G'), Blocks.glass_pane, Character.valueOf('R'), Items.redstone, Character.valueOf('A'), Mekanism.EnrichedAlloy, Character.valueOf('P'), "ingotOsmium"
+			"GGG", "RAR", "PPP", Character.valueOf('G'), "paneGlass", Character.valueOf('R'), Items.redstone, Character.valueOf('A'), Mekanism.EnrichedAlloy, Character.valueOf('P'), "ingotOsmium"
 		}));
 		CraftingManager.getInstance().getRecipeList().add(new MekanismRecipe(new ItemStack(Generator, 1, 6), new Object[] {
 			" O ", "OAO", "ECE", Character.valueOf('O'), "ingotOsmium", Character.valueOf('A'), Mekanism.EnrichedAlloy, Character.valueOf('E'), Mekanism.EnergyTablet.getUnchargedItem(), Character.valueOf('C'), "circuitBasic"

@@ -2,7 +2,6 @@ package mekanism.common.tile;
 
 import java.util.ArrayList;
 
-import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasRegistry;
@@ -16,12 +15,16 @@ import mekanism.common.IRedstoneControl;
 import mekanism.common.Mekanism;
 import mekanism.common.network.PacketTileEntity.TileEntityMessage;
 import mekanism.common.util.MekanismUtils;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import io.netty.buffer.ByteBuf;
 
 public class TileEntityGasTank extends TileEntityContainerBlock implements IGasHandler, ITubeConnection, IRedstoneControl
 {
@@ -41,6 +44,8 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
 	public int output = 256;
 
 	public Mode dumping;
+
+	public int currentGasAmount;
 
 	/** This machine's current RedstoneControl type. */
 	public RedstoneControl controlType;
@@ -89,6 +94,17 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
 		if(!worldObj.isRemote && dumping.equals(Mode.DUMPING_EXCESS) && gasTank.getNeeded() < output)
 		{
 			gasTank.draw(output, true);
+		}
+		
+		if(!worldObj.isRemote)
+		{
+			int newGasAmount = gasTank.getStored();
+			
+			if(newGasAmount != this.currentGasAmount)
+			{
+				markDirty();
+				this.currentGasAmount = newGasAmount;
+			}
 		}
 	}
 
@@ -265,6 +281,15 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
 		return true;
 	}
 
+	public int getRedstoneLevel()
+	{
+		int stored = gasTank.getStored();
+		
+		if(stored == 0) return 0;
+		
+		return MathHelper.floor_float((float)stored / (float)MAX_GAS * 14.0f + 1.0f);
+	}
+	
 	@Override
 	public RedstoneControl getControlType()
 	{

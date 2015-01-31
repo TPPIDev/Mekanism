@@ -1,7 +1,5 @@
 package mekanism.common.multipart;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,7 +17,6 @@ import mekanism.client.render.RenderPartTransmitter;
 import mekanism.common.ITileNetwork;
 import mekanism.common.Mekanism;
 import mekanism.common.Tier;
-import mekanism.common.item.ItemConfigurator;
 import mekanism.common.multipart.TransmitterType.Size;
 import mekanism.common.util.MekanismUtils;
 
@@ -32,7 +29,11 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.tools.IToolWrench;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import io.netty.buffer.ByteBuf;
+
 import codechicken.lib.data.MCDataInput;
 import codechicken.lib.data.MCDataOutput;
 import codechicken.lib.raytracer.ExtendedMOP;
@@ -50,10 +51,6 @@ import codechicken.multipart.NormalOcclusionTest;
 import codechicken.multipart.PartMap;
 import codechicken.multipart.TMultiPart;
 import codechicken.multipart.TSlottedPart;
-
-import cpw.mods.fml.common.ModAPIManager;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class PartSidedPipe extends TMultiPart implements TSlottedPart, JNormalOcclusion, ISidedHollowConnect, JIconHitEffects, ITileNetwork, IBlockableConnection, IConfigurable, ITransmitter, INeighborTileChange
 {
@@ -471,6 +468,7 @@ public abstract class PartSidedPipe extends TMultiPart implements TSlottedPart, 
 		if(nowPowered != redstonePowered)
 		{
 			refreshConnections();
+			redstonePowered = nowPowered;
 		}
 	}
 
@@ -502,16 +500,15 @@ public abstract class PartSidedPipe extends TMultiPart implements TSlottedPart, 
 
 		if(!world().isRemote)
 		{
+			if(getAllCurrentConnections() != (possibleTransmitters | possibleAcceptors))
+			{
+				sendDesc = true;
+			}
 			currentTransmitterConnections = possibleTransmitters;
 			currentAcceptorConnections = possibleAcceptors;
 		}
 
 		onRefresh();
-
-		if(!world().isRemote)
-		{
-			sendDesc = true;
-		}
 	}
 
 	protected void onModeChange(ForgeDirection side)
@@ -523,6 +520,7 @@ public abstract class PartSidedPipe extends TMultiPart implements TSlottedPart, 
 	public void onAdded()
 	{
 		super.onAdded();
+		redstonePowered = redstoneReactive && world().isBlockIndirectlyGettingPowered(x(), y(), z());
 		refreshConnections();
 	}
 
@@ -530,6 +528,7 @@ public abstract class PartSidedPipe extends TMultiPart implements TSlottedPart, 
 	public void onChunkLoad()
 	{
 		super.onChunkLoad();
+		redstonePowered = redstoneReactive && world().isBlockIndirectlyGettingPowered(x(), y(), z());
 		refreshConnections();
 	}
 	

@@ -16,6 +16,7 @@ import mekanism.api.transmitters.IGridTransmitter;
 import mekanism.api.transmitters.ITransmitterNetwork;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.common.util.PipeUtils;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -98,14 +99,17 @@ public class FluidNetwork extends DynamicNetwork<IFluidHandler, FluidNetwork>
 	}
 
 	@Override
-	protected synchronized void updateMeanCapacity()
+	protected void updateMeanCapacity()
 	{
 		int numCables = transmitters.size();
 		double sum = 0;
 
-		for(IGridTransmitter<FluidNetwork> pipe : transmitters)
+		synchronized(transmitters)
 		{
-			sum += pipe.getCapacity();
+			for(IGridTransmitter<FluidNetwork> pipe : transmitters)
+			{
+				sum += pipe.getCapacity();
+			}
 		}
 
 		meanCapacity = sum / (double)numCables;
@@ -147,12 +151,12 @@ public class FluidNetwork extends DynamicNetwork<IFluidHandler, FluidNetwork>
 		refFluid = null;
 	}
 
-	public synchronized int getFluidNeeded()
+	public int getFluidNeeded()
 	{
 		return getCapacity()-(fluidStored != null ? fluidStored.amount : 0);
 	}
 
-	public synchronized int tickEmit(FluidStack fluidToSend, boolean doTransfer)
+	public int tickEmit(FluidStack fluidToSend, boolean doTransfer)
 	{
 		List availableAcceptors = Arrays.asList(getAcceptors(fluidToSend).toArray());
 
@@ -196,7 +200,7 @@ public class FluidNetwork extends DynamicNetwork<IFluidHandler, FluidNetwork>
 		return fluidSent;
 	}
 
-	public synchronized int emit(FluidStack fluidToSend, boolean doTransfer)
+	public int emit(FluidStack fluidToSend, boolean doTransfer)
 	{
 		if(fluidToSend == null || (fluidStored != null && fluidStored.getFluid() != fluidToSend.getFluid()))
 		{
@@ -293,12 +297,12 @@ public class FluidNetwork extends DynamicNetwork<IFluidHandler, FluidNetwork>
 	}
 
 	@Override
-	public synchronized Set<IFluidHandler> getAcceptors(Object... data)
+	public Set<IFluidHandler> getAcceptors(Object... data)
 	{
 		FluidStack fluidToSend = (FluidStack)data[0];
 		Set<IFluidHandler> toReturn = new HashSet<IFluidHandler>();
 
-		for(IFluidHandler acceptor : ((Map<Coord4D, IFluidHandler>)possibleAcceptors.clone()).values())
+		for(IFluidHandler acceptor : possibleAcceptors.values())
 		{
 			if(acceptorDirections.get(acceptor) == null)
 			{
@@ -313,37 +317,9 @@ public class FluidNetwork extends DynamicNetwork<IFluidHandler, FluidNetwork>
 
 		return toReturn;
 	}
-
-	@Override
-	public synchronized void refresh()
-	{
-		Set<IGridTransmitter<FluidNetwork>> iterPipes = (Set<IGridTransmitter<FluidNetwork>>)transmitters.clone();
-		Iterator it = iterPipes.iterator();
-		boolean networkChanged = false;
-
-		while(it.hasNext())
-		{
-			IGridTransmitter<FluidNetwork> conductor = (IGridTransmitter<FluidNetwork>)it.next();
-
-			if(conductor == null || conductor.getTile().isInvalid())
-			{
-				it.remove();
-				networkChanged = true;
-				transmitters.remove(conductor);
-			}
-			else {
-				conductor.setTransmitterNetwork(this);
-			}
-		}
-
-		if(networkChanged) 
-		{
-			updateCapacity();
-		}
-	}
 	
 	@Override
-	public synchronized void refresh(IGridTransmitter<FluidNetwork> transmitter)
+	public void refresh(IGridTransmitter<FluidNetwork> transmitter)
 	{
 		IFluidHandler[] acceptors = PipeUtils.getConnectedAcceptors(transmitter.getTile());
 		
